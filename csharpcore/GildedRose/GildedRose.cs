@@ -1,89 +1,42 @@
-﻿using System.Collections.Generic;
-
-namespace GildedRoseKata
+﻿namespace GildedRoseKata
 {
     public class GildedRose
     {
-        public IList<Item> Items { get; init; }
-        public GildedRose(IList<Item> Items)
+        private const int _minQuality = 0;
+        private const int _maxQuality = 50;
+        private const int _backstage_threshold_10 = 10;
+        private const int _backstage_threshold_5 = 5;
+
+        public List<Item> Items { get; private init; }
+
+        public GildedRose(List<Item> Items)
         {
             this.Items = Items;
-        }
+        }                   
 
         public void UpdateQuality()
         {
-            for (int i = 0; i < Items.Count; i++)
+            foreach (Item item in Items)
             {
-                if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
+                int qualityChange = item.Name switch
                 {
-                    if (Items[i].Quality > 0)
-                    {
-                        if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                        {
-                            Items[i].Quality = Items[i].Quality - 1;
-                        }
-                    }
-                }
-                else
-                {
-                    if (Items[i].Quality < 50)
-                    {
-                        Items[i].Quality = Items[i].Quality + 1;
-
-                        if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].SellIn < 11)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-
-                            if (Items[i].SellIn < 6)
-                            {
-                                if (Items[i].Quality < 50)
-                                {
-                                    Items[i].Quality = Items[i].Quality + 1;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                {
-                    Items[i].SellIn = Items[i].SellIn - 1;
-                }
-
-                if (Items[i].SellIn < 0)
-                {
-                    if (Items[i].Name != "Aged Brie")
-                    {
-                        if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-                        {
-                            if (Items[i].Quality > 0)
-                            {
-                                if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-                                {
-                                    Items[i].Quality = Items[i].Quality - 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Items[i].Quality = Items[i].Quality - Items[i].Quality;
-                        }
-                    }
-                    else
-                    {
-                        if (Items[i].Quality < 50)
-                        {
-                            Items[i].Quality = Items[i].Quality + 1;
-                        }
-                    }
-                }
+                    ItemNames.Sulfuras => 0,
+                    ItemNames.AgedBrie => (item.SellIn <= 0) ? 2 : 1,
+                    ItemNames.BackstagePass => BackStageQualityChange(item),
+                    _ => (item.SellIn <= 0) ? -2 : -1            
+                };
+                item.SellIn = (item.Name == ItemNames.Sulfuras) ? item.SellIn : item.SellIn--;
+                item.Quality = Math.Clamp(item.Quality + qualityChange, _minQuality, _maxQuality);
             }
         }
+
+        private static int BackStageQualityChange(Item item) =>
+            item.SellIn switch
+            {
+                <= 0 => -item.Quality,
+                <= _backstage_threshold_5 => 3,
+                <= _backstage_threshold_10 => 2,
+                _ => 1
+            };
     }
 }
