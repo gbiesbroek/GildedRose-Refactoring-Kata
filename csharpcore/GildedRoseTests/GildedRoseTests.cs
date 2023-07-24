@@ -89,17 +89,17 @@ public class GildedRoseTests
 
         public Sulfuras()
         {
-            List<Item> items = new() { new() { Name = ItemNames.Sulfuras, SellIn = 10, Quality = 30 } };
+            List<Item> items = new() { new() { Name = ItemNames.Sulfuras, SellIn = 10, Quality = 80 } };
             _sut = new(items);
         }
 
         [Theory]
         [InlineData(10)]
         [InlineData(50)]
-        public void Quality_and_SellIn_stay_at_starting_value(int days)
+        public void Quality_should_remain_80_and_SellIn_stays_at_starting_value(int days)
         {
             _sut.RunNDays(days);
-            _sut.VerifyFirstItem(30, 10);
+            _sut.VerifyFirstItem(80, 10);
         }
     }
 
@@ -178,6 +178,23 @@ public class GildedRoseTests
         {
             _sut.RunNDays(days);
             _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
+        }
+
+        [Theory]
+        [InlineData(6, 11, -1)]
+        [InlineData(7, 7, -2)]
+        [InlineData(8, 3, -3)]
+        public void Quality_decreased_by_4_after_sell_by_date(int days, int expectedQuality, int expectedSellIn)
+        {
+            _sut.RunNDays(days);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
+        }
+
+        [Fact]
+        public void Quality_does_not_go_below_0()
+        {
+            _sut.RunNDays(9);
+            _sut.VerifyFirstItem(0, -4);
         }
     }
 }

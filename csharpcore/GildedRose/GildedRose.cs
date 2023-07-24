@@ -21,12 +21,16 @@
                 int qualityChange = item.Name switch
                 {
                     ItemNames.Sulfuras => 0,
+                    ItemNames.ConjuredMana => (item.SellIn <= 0) ? -4 : -2,
                     ItemNames.AgedBrie => (item.SellIn <= 0) ? 2 : 1,
                     ItemNames.BackstagePass => BackStageQualityChange(item),
                     _ => (item.SellIn <= 0) ? -2 : -1            
                 };
-                item.SellIn = (item.Name == ItemNames.Sulfuras) ? item.SellIn : --item.SellIn;
-                item.Quality = Math.Clamp(item.Quality + qualityChange, _minQuality, _maxQuality);
+                if (item.Name != ItemNames.Sulfuras)
+                {
+                    item.SellIn--;
+                    item.Quality = Math.Clamp(item.Quality + qualityChange, _minQuality, _maxQuality);
+                }                
             }
         }
 
