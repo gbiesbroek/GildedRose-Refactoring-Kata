@@ -25,7 +25,7 @@
                     ItemNames.BackstagePass => BackStageQualityChange(item),
                     _ => (item.SellIn <= 0) ? -2 : -1            
                 };
-                item.SellIn = (item.Name == ItemNames.Sulfuras) ? item.SellIn : item.SellIn--;
+                item.SellIn = (item.Name == ItemNames.Sulfuras) ? item.SellIn : --item.SellIn;
                 item.Quality = Math.Clamp(item.Quality + qualityChange, _minQuality, _maxQuality);
             }
         }

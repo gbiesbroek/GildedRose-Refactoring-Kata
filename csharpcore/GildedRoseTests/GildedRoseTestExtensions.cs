@@ -12,4 +12,11 @@ internal static class GildedRoseTestExtensions
         }        
         return app;
     }
+
+    public static void VerifyFirstItem(this GildedRose app, int expectedQuality, int expectedSellIn)
+    {
+        Item item = app.Items.First();
+        item.Quality.Should().Be(expectedQuality);
+        item.SellIn.Should().Be(expectedSellIn);
+    }
 }

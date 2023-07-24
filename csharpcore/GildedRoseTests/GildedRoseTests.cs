@@ -13,32 +13,32 @@ public class GildedRoseTests
         }
 
         [Theory]
-        [InlineData(1, 49)]
-        [InlineData(5, 45)]
-        [InlineData(10, 40)]
-        public void Decreases_quality_by_1_before_sell_by_date(int days, int expectedQuality)
+        [InlineData(1, 49, 9)]
+        [InlineData(5, 45, 5)]
+        [InlineData(10, 40, 0)]
+        public void Decreases_quality_by_1_before_sell_by_date(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
 
         [Theory]
-        [InlineData(11, 38)]
-        [InlineData(25, 10)]
-        [InlineData(30, 0)]
-        public void Decreases_quality_by_2_after_sell_by_date(int days, int expectedQuality)
+        [InlineData(11, 38, -1)]
+        [InlineData(25, 10, -15)]
+        [InlineData(30, 0, -20)]
+        public void Decreases_quality_by_2_after_sell_by_date(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
 
         [Theory]
-        [InlineData(31, 0)]
-        [InlineData(50, 0)]
-        public void Quality_does_not_decrease_below_0(int days, int expectedQuality)
+        [InlineData(31, 0, -21)]
+        [InlineData(50, 0, -40)]
+        public void Quality_does_not_decrease_below_0(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
     }
 
@@ -53,34 +53,33 @@ public class GildedRoseTests
         }
 
         [Theory]
-        [InlineData(1, 6)]
-        [InlineData(2, 7)]
-        [InlineData(10, 15)]
-        public void Increases_quality_by_1_before_sell_by_date(int days, int expectedQuality)
-        {            
+        [InlineData(1, 6, 9)]
+        [InlineData(2, 7, 8)]
+        [InlineData(10, 15, 0)]
+        public void Increases_quality_by_1_before_sell_by_date(int days, int expectedQuality, int expectedSellIn)
+        {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
 
         [Theory]
-        [InlineData(11, 17)]
-        [InlineData(20, 35)]
-        [InlineData(25, 45)]
-        [InlineData(27, 49)]
-        public void Increases_quality_by_2_after_sell_by_date(int days, int expectedQuality)
+        [InlineData(11, 17, -1)]
+        [InlineData(20, 35, -10)]
+        [InlineData(25, 45, -15)]
+        [InlineData(27, 49, -17)]
+        public void Increases_quality_by_2_after_sell_by_date(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
 
         [Theory]
-        [InlineData(28, 50)]
-        [InlineData(50, 50)]
-        [InlineData(60, 50)]
-        public void Quality_does_not_increase_above_50(int days, int expectedQuality)
+        [InlineData(28, 50, -18)]
+        [InlineData(50, 50, -40)]
+        public void Quality_does_not_increase_above_50(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
     }
 
@@ -100,9 +99,7 @@ public class GildedRoseTests
         public void Quality_and_SellIn_stay_at_starting_value(int days)
         {
             _sut.RunNDays(days);
-            Item result = _sut.Items.First();
-            result.Quality.Should().Be(30);
-            result.SellIn.Should().Be(10);
+            _sut.VerifyFirstItem(30, 10);
         }
     }
 
@@ -117,54 +114,70 @@ public class GildedRoseTests
         }
 
         [Theory]
-        [InlineData(1, 26)]
-        [InlineData(2, 27)]
-        [InlineData(5, 30)]
-        public void Quality_increase_by_1_until_10_days_before_sell_by_date(int days, int expectedQuality)
+        [InlineData(1, 26, 14)]
+        [InlineData(2, 27, 13)]
+        [InlineData(5, 30, 10)]
+        public void Quality_increase_by_1_until_10_days_before_sell_by_date(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
 
         [Theory]
-        [InlineData(6, 32)]
-        [InlineData(7, 34)]
-        [InlineData(10, 40)]
-        public void Quality_increase_by_2_between_10_and_5_days_before_sell_by_date(int days, int expectedQuality)
+        [InlineData(6, 32, 9)]
+        [InlineData(7, 34, 8)]
+        [InlineData(10, 40, 5)]
+        public void Quality_increase_by_2_between_10_and_5_days_before_sell_by_date(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
 
         [Theory]
-        [InlineData(11, 43)]
-        [InlineData(12, 46)]
-        [InlineData(13, 49)]
-        public void Quality_increase_by_3_between_5_and_0_days_before_sell_by_date(int days, int expectedQuality)
+        [InlineData(11, 43, 4)]
+        [InlineData(12, 46, 3)]
+        [InlineData(13, 49, 2)]
+        public void Quality_increase_by_3_between_5_and_0_days_before_sell_by_date(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
 
         [Theory]
-        [InlineData(16, 0)]
-        [InlineData(30, 0)]
-        public void Quality_drops_to_0_after_sell_by_date(int days, int expectedQuality)
+        [InlineData(16, 0, -1)]
+        [InlineData(30, 0, -15)]
+        public void Quality_drops_to_0_after_sell_by_date(int days, int expectedQuality, int expectedSellIn)
         {
             _sut.RunNDays(days);
-            _sut.Items.First().Quality.Should().Be(expectedQuality);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
         }
 
         [Fact]
         public void Quality_does_not_go_above_50()
         {
             _sut.RunNDays(15);
-            _sut.Items.First().Quality.Should().Be(50);
+            _sut.VerifyFirstItem(50, 0);
         }
     }
 
-    public class Conjured
+    public class ConjuredItem
     {
+        private readonly GildedRose _sut;
 
+        public ConjuredItem()
+        {
+            List<Item> items = new() { new() { Name = ItemNames.ConjuredMana, SellIn = 5, Quality = 25 } };
+            _sut = new(items);
+        }
+
+        [Theory]
+        [InlineData(1, 23, 4)]
+        [InlineData(2, 21, 3)]
+        [InlineData(5, 15, 0)]
+        public void Quality_decreased_by_2_before_sell_by_date(int days, int expectedQuality, int expectedSellIn)
+        {
+            _sut.RunNDays(days);
+            _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
+        }
     }
 }
