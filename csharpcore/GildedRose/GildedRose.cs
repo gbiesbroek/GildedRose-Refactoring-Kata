@@ -18,21 +18,26 @@
         {
             foreach (Item item in Items)
             {
-                bool isAfterSellByDate = item.SellIn <= 0;
-                int qualityChange = item.Name switch
-                {
-                    ItemNames.Sulfuras      => 0,
-                    ItemNames.ConjuredMana  => isAfterSellByDate ? -4 : -2,
-                    ItemNames.AgedBrie      => isAfterSellByDate ? 2 : 1,
-                    ItemNames.BackstagePass => BackStageQualityChange(item),
-                    _                       => isAfterSellByDate ? -2 : -1            
-                };
+                int qualityChange = DetermineQualityChange(item);
                 if (item.Name != ItemNames.Sulfuras)
                 {
-                    item.SellIn--;
+                    --item.SellIn;
                     item.Quality = Math.Clamp(item.Quality + qualityChange, _minQuality, _maxQuality);
                 }                
             }
+        }
+
+        private static int DetermineQualityChange(Item item)
+        {
+            bool beforeSellDate = item.SellIn > 0;
+            return item.Name switch
+            {
+                ItemNames.Sulfuras      => 0,
+                ItemNames.ConjuredMana  => beforeSellDate ? -2 : -4,
+                ItemNames.AgedBrie      => beforeSellDate ? 1 : 2,
+                ItemNames.BackstagePass => BackStageQualityChange(item),
+                _                       => beforeSellDate ? -1 : -2
+            };
         }
 
         private static int BackStageQualityChange(Item item) =>
