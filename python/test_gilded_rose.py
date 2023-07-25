@@ -55,7 +55,7 @@ class aged_brie(TestCase):
         ]
         _run_tests(self, test_data)    
     
-    def test_quality_does_go_above_50(self):
+    def test_quality_does_not_go_above_50(self):
         test_data = [
              TestData(28, self._item(), 50, -18),
              TestData(50, self._item(), 50, -40)
@@ -115,7 +115,7 @@ class backstage_passes(TestCase):
         ]
         _run_tests(self, test_data)
 
-    def test_quality_does_go_above_50(self):
+    def test_quality_does_not_go_above_50(self):
         test_data = [
             TestData(15, self._item(), 50, 0)
         ]
