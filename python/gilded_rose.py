@@ -44,3 +44,11 @@ class Item:
 
     def __repr__(self):
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
+
+class ItemNames:
+    DEXTERITY_VEST = "+5 Dexterity Vest"
+    AGED_BRIE = "Aged Brie"
+    MONGOOSE_ELIXER = "Elixir of the Mongoose"
+    SULFURAS = "Sulfuras, Hand of Ragnaros"
+    BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert"
+    CONJURED_MANA = "Conjured Mana Cake"
