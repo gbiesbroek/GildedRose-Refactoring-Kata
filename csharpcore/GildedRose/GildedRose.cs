@@ -18,12 +18,12 @@ public class GildedRose
     {
         foreach (Item item in Items)
         {
+            if (item.Name == ItemNames.Sulfuras)
+                continue;
+
             int qualityChange = DetermineQualityChange(item);
-            if (item.Name != ItemNames.Sulfuras)
-            {
-                --item.SellIn;
-                item.Quality = Math.Clamp(item.Quality + qualityChange, _minQuality, _maxQuality);
-            }                
+            --item.SellIn;
+            item.Quality = Math.Clamp(item.Quality + qualityChange, _minQuality, _maxQuality);                            
         }
     }
 
@@ -32,7 +32,6 @@ public class GildedRose
         bool beforeSellDate = item.SellIn > 0;
         return item.Name switch
         {
-            ItemNames.Sulfuras      => 0,
             ItemNames.ConjuredMana  => beforeSellDate ? -2 : -4,
             ItemNames.AgedBrie      => beforeSellDate ? 1 : 2,
             ItemNames.BackstagePass => BackStageQualityChange(item),
