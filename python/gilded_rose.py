@@ -28,10 +28,11 @@ class GildedRose(object):
 
     def _determine_quality_change(self, item: Item) -> int:
         before_sell_date = item.sell_in > 0
-        change_values = {            
+        change_values = {
+            ItemNames.CONJURED_MANA : -2 if before_sell_date else -4,            
             ItemNames.BACKSTAGE_PASS: self._backstage_quality_change(item),
-            ItemNames.AGED_BRIE: 1 if before_sell_date else 2,
-            ItemNames.DEFAULT: -1 if before_sell_date else -2
+            ItemNames.AGED_BRIE     : 1 if before_sell_date else 2,
+            ItemNames.DEFAULT       : -1 if before_sell_date else -2
         }
         search_key = item.name if item.name in change_values else ItemNames.DEFAULT        
         return change_values[search_key]
