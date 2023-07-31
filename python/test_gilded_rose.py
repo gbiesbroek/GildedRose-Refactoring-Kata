@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from unittest import TestCase, main as unittests_main
 from dataclasses import dataclass
 from gilded_rose import Item, GildedRose, ItemNames
@@ -61,16 +60,6 @@ class aged_brie(TestCase):
              TestData(50, self._item(), 50, -40)
         ]
         _run_tests(self, test_data)
-
-    '''
-    [InlineData(28, 50, -18)]
-    [InlineData(50, 50, -40)]
-    public void Quality_does_not_increase_above_50(int days, int expectedQuality, int expectedSellIn)
-    {
-        _sut.RunNDays(days);
-        _sut.VerifyFirstItem(expectedQuality, expectedSellIn);
-    }
-    '''
            
 class sulfuras(TestCase):
      def test_quality_should_remain_80_and_sell_by_date_stays_at_starting_value(self):
